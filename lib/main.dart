@@ -2,14 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:voice_assistant/screens/voice_assistant.dart';
 
-// Load environment variables before starting the app
-// This is used to configure the LiveKit sandbox ID for development
 void main() async {
   await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
-// Main app configuration with light/dark theme support
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 

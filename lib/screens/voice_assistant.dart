@@ -15,8 +15,17 @@ class VoiceAssistant extends StatefulWidget {
 }
 
 class _VoiceAssistantState extends State<VoiceAssistant> {
-
-  final room = Room(roomOptions: const RoomOptions(enableVisualizer: true,));
+  final room = Room(
+      roomOptions: const RoomOptions(
+    enableVisualizer: true,
+    dynacast: true,
+    defaultScreenShareCaptureOptions: ScreenShareCaptureOptions(
+      captureScreenAudio: true,
+      useiOSBroadcastExtension: true,
+      preferCurrentTab: true,
+      params: VideoParametersPresets.screenShareH2160FPS30,
+    ),
+  ));
 
   @override
   Widget build(BuildContext context) {

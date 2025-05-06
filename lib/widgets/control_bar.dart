@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background/flutter_background.dart';
 import 'package:livekit_client/livekit_client.dart' as livekit
     show ConnectionState;
 import 'package:provider/provider.dart';
 import 'package:voice_assistant/services/server_service.dart';
 import '../services/token_service.dart';
 import 'package:livekit_components/livekit_components.dart';
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 enum Configuration { disconnected, connected, transitioning }
 
@@ -61,7 +63,7 @@ class _ControlBarState extends State<ControlBar> {
         url: connectionDetails.serverUrl,
         token: connectionDetails.participantToken,
       );
-
+      _enableScreenShare(roomContext);
       await roomContext.localParticipant?.setMicrophoneEnabled(true);
     } catch (error) {
       debugPrint('Connection error: $error');
@@ -72,15 +74,59 @@ class _ControlBarState extends State<ControlBar> {
     }
   }
 
+  void _enableScreenShare(RoomContext roomContext) async {
+    bool hasCapturePermission = await Helper.requestCapturePermission();
+    if (!hasCapturePermission) {
+      return;
+    }
+
+    requestBackgroundPermission([bool isRetry = false]) async {
+      try {
+        bool hasPermissions = await FlutterBackground.hasPermissions;
+        if (!isRetry) {
+          const androidConfig = FlutterBackgroundAndroidConfig(
+            notificationTitle: 'Screen Sharing',
+            notificationText: 'LiveKit Example is sharing the screen.',
+            notificationImportance: AndroidNotificationImportance.normal,
+            notificationIcon:
+                AndroidResource(name: 'livekit_ic_launcher', defType: 'mipmap'),
+          );
+          hasPermissions =
+              await FlutterBackground.initialize(androidConfig: androidConfig);
+        }
+        if (hasPermissions && !FlutterBackground.isBackgroundExecutionEnabled) {
+          await FlutterBackground.enableBackgroundExecution();
+        }
+      } catch (e) {
+        if (!isRetry) {
+          return await Future<void>.delayed(const Duration(seconds: 1),
+              () => requestBackgroundPermission(true));
+        }
+        print('could not publish video: $e');
+      }
+    }
+
+    await requestBackgroundPermission();
+    await roomContext.localParticipant
+        ?.setScreenShareEnabled(true, captureScreenAudio: true);
+  }
+
+  void _disableScreenShare(RoomContext roomContext) async {
+    await roomContext.localParticipant?.setScreenShareEnabled(false);
+    try {
+      await FlutterBackground.disableBackgroundExecution();
+    } catch (error) {
+      print('error disabling screen share: $error');
+    }
+  }
+
   Future<void> disconnect() async {
     final roomContext = context.read<RoomContext>();
-
     setState(() {
       isDisconnecting = true;
     });
-
+    _disableScreenShare(roomContext);
     await roomContext.disconnect();
-
     setState(() {
       isDisconnecting = false;
     });
@@ -128,7 +174,6 @@ class _ControlBarState extends State<ControlBar> {
 
             case Configuration.connected:
               return Row(
-
                 children: [
                   const AudioControls(),
                   DisconnectButton(onPressed: disconnect),
