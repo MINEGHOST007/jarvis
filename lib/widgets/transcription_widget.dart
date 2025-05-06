@@ -37,32 +37,48 @@ class _TranscriptionWidgetState extends State<TranscriptionWidget> {
 
       if (participant is LocalParticipant) {
         msgWidgets.add(
-          BubbleNormal(
-            text: segment.text + (segment.isFinal ? '' : '...'),
-            textStyle: TextStyle(
-              color: widget.textColor,
-              fontSize: 18,
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: BubbleNormal(
+              text: segment.text + (segment.isFinal ? '' : '...'),
+              textStyle: TextStyle(
+                color: widget.textColor,
+                fontSize: 18,
+              ),
+              color: widget.backgroundColor,
+              tail: true,
+              isSender: true,
             ),
-            color: widget.backgroundColor,
-            tail: true,
-            isSender: true,
           ),
         );
       } else {
-        msgWidgets.add(Row(
-          children: [
-            SizedBox(
-              width: 320,
-              child: Text(
-                segment.text + (segment.isFinal ? '' : '...'),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontSize: 18,
+        msgWidgets.add(
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * 0.8,
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                decoration: BoxDecoration(
+                  color:
+                      Theme.of(context).colorScheme.primary.withOpacity(0.08),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  segment.text + (segment.isFinal ? '' : '...'),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 18,
+                  ),
                 ),
               ),
             ),
-          ],
-        ));
+          ),
+        );
       }
     }
     return msgWidgets;

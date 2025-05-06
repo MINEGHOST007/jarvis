@@ -14,10 +14,6 @@ class ServerService {
 
   factory ServerService() => _instance;
 
-  String get _sessionId => dotenv.env['SESSION_ID']?.trim().isNotEmpty == true
-      ? dotenv.env['SESSION_ID']!
-      : 'default_session_id';
-
   final UserIdService _userIdService = UserIdService();
   Future<Map<String, dynamic>> startEgress(String roomName) async {
     final userId = await _userIdService.getUserId();

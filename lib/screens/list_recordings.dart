@@ -63,6 +63,7 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh recordings',
             onPressed: _refresh,
           ),
         ],
@@ -80,18 +81,23 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
                 return const Center(child: Text('No recordings found.'));
               } else {
                 final recordings = snapshot.data!;
-                return ListView.builder(
+                return ListView.separated(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                   itemCount: recordings.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final fullPath = recordings[index];
                     final fileName = p.basename(fullPath);
                     return Card(
-                      margin: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
                       child: ListTile(
-                        title: Text(fileName),
+                        title: Text(fileName,
+                            style:
+                                const TextStyle(fontWeight: FontWeight.w500)),
                         trailing: IconButton(
                           icon: const Icon(Icons.download),
+                          tooltip: 'Download',
                           onPressed: () => _downloadRecording(fullPath),
                         ),
                         onTap: () => _downloadRecording(fullPath),

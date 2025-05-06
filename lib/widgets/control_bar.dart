@@ -189,7 +189,13 @@ class _ControlBarState extends State<ControlBar> {
               );
 
             case Configuration.transitioning:
-              return TransitionButton(isConnecting: isConnecting);
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: SizedBox(
+                  height: 48,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+              );
           }
         }),
       ],

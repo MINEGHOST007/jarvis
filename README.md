@@ -1,42 +1,91 @@
-<img src="./.github/assets/app-icon.png" alt="Voice assistant app icon" width="100" height="100">
+<img src="./.github/assets/app-icon.png" alt="Voice Assistant app icon" width="100" height="100">
 
-# Flutter Voice Assistant
+# Jarvis - Flutter Voice Assistant
 
-This is a starter template for [LiveKit Agents](https://docs.livekit.io/agents/overview/) that provides a simple voice interface using the [LiveKit Flutter SDK](https://github.com/livekit/client-sdk-flutter).
+An intelligent voice assistant app built with Flutter and powered by LiveKit's real-time communication platform. Talk to an AI assistant using natural voice commands and receive spoken responses.
 
-This template is compatible with iOS, macOS, Android, and web. It is free for you to use or modify as you see fit.
+![Voice Assistant Screenshot](./.github/assets/screenshot.png)
 
-<img src="./.github/assets/screenshot.png" alt="Voice Assistant Screenshot" height="500">
+## ✨ Features
 
-## Getting started
+- **Voice Interaction**: Seamless voice-based conversations with AI assistants
+- **Real-time Transcription**: See your conversations as they happen
+- **Multi-platform Support**: Works on iOS, Android, macOS, and web
+- **Recording History**: Access your past conversations
+- **Dark/Light Theme**: Automatic theme based on system preferences
+- **Open Source**: Fully customizable for your specific needs
 
-The easiest way to get this app running is with the [Sandbox for LiveKit Cloud](https://cloud.livekit.io/projects/p_/sandbox) and the [LiveKit CLI](https://docs.livekit.io/home/cli/cli-setup/).
+## 🚀 Quick Start
 
-First, create a new [Sandbox Token Server](https://cloud.livekit.io/projects/p_mytc7vpzfkt/sandbox/templates/token-server) for your LiveKit Cloud project.
+### Prerequisites
+- Flutter SDK (latest stable version)
+- LiveKit account (free tier available)
+- For iOS: Xcode with valid signing certificates
+- For Android: Android Studio
 
-Then, run the following command to automatically clone this template and connect it to LiveKit Cloud.
+### Installation
 
-```bash
-lk app create --template voice-assistant-flutter --sandbox <token_server_sandbox_id>
-```
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/jarvis.git
+   cd jarvis
+   ```
 
-Install dependencies and run the app:
-```bash
-flutter pub get
-flutter run
-```
+2. **Setup LiveKit integration**
 
-Note: You may need to configure signing certificates in Xcode if building to a real iOS device.
+   Option 1: Using LiveKit CLI (recommended)
+   ```bash
+   # Install LiveKit CLI if you don't have it
+   npm install -g livekit-cli
+   
+   # Create a new project with your sandbox token
+   lk app create --template voice-assistant-flutter --sandbox <your_token_server_id>
+   ```
 
-You'll also need an agent to speak with. Try our sample voice assistant agent for [Python](https://github.com/livekit-examples/voice-pipeline-agent-python), [Node.js](https://github.com/livekit-examples/voice-pipeline-agent-node), or [create your own from scratch](https://docs.livekit.io/agents/quickstart/).
+   Option 2: Manual setup
+   - Create a `.env` file in the project root with your LiveKit Sandbox ID:
+     ```
+     LIVEKIT_SANDBOX_ID=<your_sandbox_id>
+     ```
+   - Or update `token_service.dart` with your URL and token
 
-> [!NOTE]
-> To setup without the LiveKit CLI, clone the repository and then either create a `.env` with a `LIVEKIT_SANDBOX_ID` (if using a [Sandbox Token Server](https://cloud.livekit.io/projects/p_/sandbox/templates/token-server)), or open `token_service.dart` and add your [manually generated](#token-generation) URL and token.
+3. **Install dependencies and run**
+   ```bash
+   flutter pub get
+   flutter run
+   ```
 
-## Token generation
+## 🤖 Connecting an Agent
 
-In a production environment, you will be responsible for developing a solution to [generate tokens for your users](https://docs.livekit.io/home/server/generating-tokens/) which is integrated with your authentication solution. You should disable your sandbox token server and modify `token_service.dart` to use your own token server.
+Your voice assistant needs an AI agent to talk to. Choose one of these options:
 
-## Contributing
+- [Python Sample Agent](https://github.com/livekit-examples/voice-pipeline-agent-python)
+- [Node.js Sample Agent](https://github.com/livekit-examples/voice-pipeline-agent-node)
+- [Build Your Own Agent](https://docs.livekit.io/agents/quickstart/)
 
-This template is open source and we welcome contributions! Please open a PR or issue through GitHub, and don't forget to join us in the [LiveKit Community Slack](https://livekit.io/join-slack)!
+## 🔑 Production Deployment
+
+For production environments:
+
+1. Implement a proper token generation service for authentication
+2. Disable the sandbox token server
+3. Modify `token_service.dart` to communicate with your token server
+4. Follow the [LiveKit token generation guide](https://docs.livekit.io/home/server/generating-tokens/)
+
+## 🔧 Customization
+
+The app uses Material Design with a purple color scheme and responsive layout. Customize the UI by:
+
+1. Modifying the theme in `main.dart`
+2. Updating UI components in the `widgets` directory
+3. Extending functionality in the `services` directory
+
+## 🤝 Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
