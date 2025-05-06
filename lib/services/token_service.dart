@@ -106,6 +106,7 @@ class TokenService extends ChangeNotifier {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         try {
           final data = jsonDecode(response.body);
+          debugPrint("Details : ${data}");
           return ConnectionDetails.fromJson(data);
         } catch (e) {
           debugPrint(
@@ -139,3 +140,6 @@ class TokenService extends ChangeNotifier {
     );
   }
 }
+
+//d5fc3d1b4ac744f7bad63d7b338487feeff79d4e
+//sk_car_U4vE6QxZhJhyE7RRwqmZC4

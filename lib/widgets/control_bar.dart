@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:livekit_client/livekit_client.dart' as livekit
     show ConnectionState;
 import 'package:provider/provider.dart';
+import 'package:voice_assistant/services/server_service.dart';
 import '../services/token_service.dart';
 import 'package:livekit_components/livekit_components.dart';
 
@@ -28,6 +29,8 @@ class _ControlBarState extends State<ControlBar> {
   // Track connection state transitions
   bool isConnecting = false;
   bool isDisconnecting = false;
+  bool isEgressActive = false;
+  ServerService serverService = ServerService();
   // Helper to determine the current UI configuration based on connection state
   Configuration get currentConfiguration {
     if (isConnecting || isDisconnecting) {
@@ -80,7 +83,6 @@ class _ControlBarState extends State<ControlBar> {
         url: connectionDetails.serverUrl,
         token: connectionDetails.participantToken,
       );
-
       // Enable the microphone after connecting
       await roomContext.localParticipant?.setMicrophoneEnabled(true);
     } catch (error) {
@@ -107,6 +109,34 @@ class _ControlBarState extends State<ControlBar> {
     });
   }
 
+  /// Starts egress (recording) for the current room
+  Future<void> startEgress() async {
+    final roomContext = context.read<RoomContext>();
+    String? roomName = roomContext.room.name;
+    if (roomName == null) {
+      debugPrint('Room name is null');
+      return;
+    }
+    await serverService.startEgress(roomName);
+    setState(() {
+      isEgressActive = true;
+    });
+  }
+
+  /// Stops egress (recording) for the current room
+  Future<void> stopEgress() async {
+    final roomContext = context.read<RoomContext>();
+    String? roomName = roomContext.room.name;
+    if (roomName == null) {
+      debugPrint('Room name is null');
+      return;
+    }
+    await serverService.stopEgress(roomName);
+    setState(() {
+      isEgressActive = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -120,10 +150,17 @@ class _ControlBarState extends State<ControlBar> {
 
             case Configuration.connected:
               return Row(
-                spacing: 16,
+                // spacing: 16, // Remove this, not a valid property for Row
                 children: [
                   const AudioControls(),
                   DisconnectButton(onPressed: disconnect),
+                  // Start/Stop recording button
+                  IconButton(
+                    onPressed: isEgressActive ? stopEgress : startEgress,
+                    icon: Icon(isEgressActive ? Icons.stop : Icons.mic),
+                    tooltip:
+                        isEgressActive ? 'Stop Recording' : 'Start Recording',
+                  ),
                 ],
               );
 
