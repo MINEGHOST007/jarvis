@@ -6,18 +6,8 @@ import 'package:voice_assistant/services/server_service.dart';
 import '../services/token_service.dart';
 import 'package:livekit_components/livekit_components.dart';
 
-/// Possible states for the control bar UI
-/// - disconnected: Not connected to a LiveKit room
-/// - connected: Successfully connected and streaming
-/// - transitioning: Currently connecting or disconnecting
 enum Configuration { disconnected, connected, transitioning }
 
-/// The main control interface for the voice assistant
-/// Handles:
-/// - Connecting to LiveKit rooms
-/// - Disconnecting from rooms
-/// - Toggling microphone
-/// - Displaying audio visualization
 class ControlBar extends StatefulWidget {
   const ControlBar({super.key});
 
@@ -26,18 +16,15 @@ class ControlBar extends StatefulWidget {
 }
 
 class _ControlBarState extends State<ControlBar> {
-  // Track connection state transitions
   bool isConnecting = false;
   bool isDisconnecting = false;
   bool isEgressActive = false;
   ServerService serverService = ServerService();
-  // Helper to determine the current UI configuration based on connection state
   Configuration get currentConfiguration {
     if (isConnecting || isDisconnecting) {
       return Configuration.transitioning;
     }
 
-    // Check the LiveKit room's connection state
     final roomContext = context.read<RoomContext>();
     if (roomContext.room.connectionState ==
         livekit.ConnectionState.disconnected) {
@@ -47,11 +34,6 @@ class _ControlBarState extends State<ControlBar> {
     }
   }
 
-  /// Connects to a LiveKit room by:
-  /// 1. Generating random room/participant names
-  /// 2. Getting connection details from TokenService
-  /// 3. Connecting to the room using RoomContext
-  /// 4. Enabling the microphone
   Future<void> connect() async {
     final roomContext = context.read<RoomContext>();
     final tokenService = context.read<TokenService>();
@@ -61,14 +43,11 @@ class _ControlBarState extends State<ControlBar> {
     });
 
     try {
-      // Generate random room and participant names
-      // In a real app, you'd likely use meaningful names
       final roomName =
           'room-${(1000 + DateTime.now().millisecondsSinceEpoch % 9000)}';
       final participantName =
           'user-${(1000 + DateTime.now().millisecondsSinceEpoch % 9000)}';
 
-      // Get connection details from token service
       final connectionDetails = await tokenService.fetchConnectionDetails(
         roomName: roomName,
         participantName: participantName,
@@ -78,12 +57,11 @@ class _ControlBarState extends State<ControlBar> {
         throw Exception('Failed to get connection details');
       }
 
-      // Connect to the LiveKit room
       await roomContext.connect(
         url: connectionDetails.serverUrl,
         token: connectionDetails.participantToken,
       );
-      // Enable the microphone after connecting
+
       await roomContext.localParticipant?.setMicrophoneEnabled(true);
     } catch (error) {
       debugPrint('Connection error: $error');
@@ -94,7 +72,6 @@ class _ControlBarState extends State<ControlBar> {
     }
   }
 
-  /// Disconnects from the current LiveKit room
   Future<void> disconnect() async {
     final roomContext = context.read<RoomContext>();
 
@@ -109,7 +86,8 @@ class _ControlBarState extends State<ControlBar> {
     });
   }
 
-  /// Starts egress (recording) for the current room
+  String egressId = '';
+
   Future<void> startEgress() async {
     final roomContext = context.read<RoomContext>();
     String? roomName = roomContext.room.name;
@@ -117,13 +95,13 @@ class _ControlBarState extends State<ControlBar> {
       debugPrint('Room name is null');
       return;
     }
-    await serverService.startEgress(roomName);
+    var metadata = await serverService.startEgress(roomName);
     setState(() {
+      egressId = metadata['info']['egress_id'];
       isEgressActive = true;
     });
   }
 
-  /// Stops egress (recording) for the current room
   Future<void> stopEgress() async {
     final roomContext = context.read<RoomContext>();
     String? roomName = roomContext.room.name;
@@ -131,8 +109,9 @@ class _ControlBarState extends State<ControlBar> {
       debugPrint('Room name is null');
       return;
     }
-    await serverService.stopEgress(roomName);
+    await serverService.stopEgress(egressId);
     setState(() {
+      egressId = '';
       isEgressActive = false;
     });
   }
@@ -142,7 +121,6 @@ class _ControlBarState extends State<ControlBar> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // Show different buttons based on connection state
         Builder(builder: (context) {
           switch (currentConfiguration) {
             case Configuration.disconnected:
@@ -150,11 +128,10 @@ class _ControlBarState extends State<ControlBar> {
 
             case Configuration.connected:
               return Row(
-                // spacing: 16, // Remove this, not a valid property for Row
+
                 children: [
                   const AudioControls(),
                   DisconnectButton(onPressed: disconnect),
-                  // Start/Stop recording button
                   IconButton(
                     onPressed: isEgressActive ? stopEgress : startEgress,
                     icon: Icon(isEgressActive ? Icons.stop : Icons.mic),
@@ -173,7 +150,6 @@ class _ControlBarState extends State<ControlBar> {
   }
 }
 
-/// Button shown when disconnected to start a new conversation
 class ConnectButton extends StatelessWidget {
   final VoidCallback onPressed;
 
@@ -199,7 +175,6 @@ class ConnectButton extends StatelessWidget {
   }
 }
 
-/// Button shown when connected to end the conversation
 class DisconnectButton extends StatelessWidget {
   final VoidCallback onPressed;
 
@@ -218,7 +193,6 @@ class DisconnectButton extends StatelessWidget {
   }
 }
 
-/// (fake) button shown during connection state transitions
 class TransitionButton extends StatelessWidget {
   final bool isConnecting;
 
@@ -227,7 +201,7 @@ class TransitionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: null, // Disabled during transition
+      onPressed: null,
       style: TextButton.styleFrom(
         backgroundColor:
             Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
@@ -245,7 +219,6 @@ class TransitionButton extends StatelessWidget {
   }
 }
 
-/// Audio controls shown when connected
 class AudioControls extends StatelessWidget {
   const AudioControls({super.key});
 

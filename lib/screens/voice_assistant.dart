@@ -8,8 +8,6 @@ import 'package:voice_assistant/widgets/agent_status.dart';
 import 'package:voice_assistant/widgets/control_bar.dart';
 import 'package:voice_assistant/widgets/transcription_widget.dart';
 
-/// The main voice assistant screen that manages the LiveKit room connection
-/// and displays the status visualizer and control bar
 class VoiceAssistant extends StatefulWidget {
   const VoiceAssistant({super.key});
   @override
@@ -17,16 +15,12 @@ class VoiceAssistant extends StatefulWidget {
 }
 
 class _VoiceAssistantState extends State<VoiceAssistant> {
-  // Create a LiveKit Room instance with audio visualization enabled
-  // This is the main object that manages the connection to LiveKit
+
   final room = Room(roomOptions: const RoomOptions(enableVisualizer: true,));
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      // Provide the TokenService and RoomContext to descendant widgets
-      // TokenService handles LiveKit authentication
-      // RoomContext provides LiveKit room state and operations
       providers: [
         ChangeNotifierProvider(create: (context) => TokenService()),
         ChangeNotifierProvider(create: (context) => RoomContext(room: room)),
@@ -57,12 +51,10 @@ class _VoiceAssistantState extends State<VoiceAssistant> {
                     },
                   ),
                 ),
-                // Status widget shows the agent's audio visualization
                 const Expanded(
                   flex: 3,
                   child: AgentStatusWidget(),
                 ),
-                // Control bar handles room connection and audio controls
                 const Expanded(
                   flex: 3,
                   child: ControlBar(),

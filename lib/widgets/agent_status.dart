@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:livekit_components/livekit_components.dart';
 
-/// Shows a visualizer for the agent participant in the room
-/// This widget:
-/// 1. Finds the agent participant in the room
-/// 2. Listens to their audio track
-/// 3. Shows a waveform visualization of their audio
-/// 4. Adjusts opacity based on agent state (speaking/thinking/listening)
+
 class AgentStatusWidget extends StatefulWidget {
   const AgentStatusWidget({
     super.key,
@@ -21,7 +16,7 @@ class _AgentStatusWidgetState extends State<AgentStatusWidget> {
   Widget build(BuildContext context) {
     return ParticipantSelector(
       filter: (identifier) =>
-          identifier.isAudio && !identifier.isLocal /*&& identifier.isAgent*/,
+          identifier.isAudio && !identifier.isLocal,
       builder: (context, identifier) {
         return SizedBox(
           height: 320,
@@ -40,13 +35,12 @@ class _AgentStatusWidgetState extends State<AgentStatusWidget> {
   }
 }
 
-/// Possible states for the agent participant
-/// These states are set by the agent and sent via LiveKit metadata
+
 enum AgentState {
-  initializing, // Agent is starting up
-  speaking, // Agent is speaking to the user
-  thinking, // Agent is processing user input
-  listening; // Agent is listening to user audio
+  initializing,
+  speaking,
+  thinking,
+  listening; 
 
   static AgentState fromString(String value) {
     return AgentState.values.firstWhere(
