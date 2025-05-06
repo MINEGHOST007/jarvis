@@ -7,6 +7,7 @@ import 'package:voice_assistant/services/server_service.dart';
 import '../services/token_service.dart';
 import 'package:livekit_components/livekit_components.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
+import 'package:voice_assistant/services/user_id_service.dart';
 
 enum Configuration { disconnected, connected, transitioning }
 
@@ -22,6 +23,7 @@ class _ControlBarState extends State<ControlBar> {
   bool isDisconnecting = false;
   bool isEgressActive = false;
   ServerService serverService = ServerService();
+  final UserIdService _userIdService = UserIdService();
   Configuration get currentConfiguration {
     if (isConnecting || isDisconnecting) {
       return Configuration.transitioning;
@@ -45,10 +47,10 @@ class _ControlBarState extends State<ControlBar> {
     });
 
     try {
+      final userId = await _userIdService.getUserId();
       final roomName =
           'room-${(1000 + DateTime.now().millisecondsSinceEpoch % 9000)}';
-      final participantName =
-          'user-${(1000 + DateTime.now().millisecondsSinceEpoch % 9000)}';
+      final participantName = userId;
 
       final connectionDetails = await tokenService.fetchConnectionDetails(
         roomName: roomName,

@@ -3,6 +3,7 @@ import 'package:livekit_client/livekit_client.dart';
 import 'package:livekit_components/livekit_components.dart'
     show RoomContext, TranscriptionBuilder;
 import 'package:provider/provider.dart';
+import 'package:voice_assistant/screens/list_recordings.dart';
 import 'package:voice_assistant/services/token_service.dart';
 import 'package:voice_assistant/widgets/agent_status.dart';
 import 'package:voice_assistant/widgets/control_bar.dart';
@@ -35,9 +36,18 @@ class _VoiceAssistantState extends State<VoiceAssistant> {
         ChangeNotifierProvider(create: (context) => RoomContext(room: room)),
       ],
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Voice Assistant'),
-        ),
+        appBar: AppBar(title: const Text('Voice Assistant'), actions: [
+          IconButton(
+              icon: const Icon(Icons.list),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RecordingsListScreen(),
+                  ),
+                );
+              }),
+        ]),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
