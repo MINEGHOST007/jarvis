@@ -54,15 +54,6 @@ An intelligent voice assistant app built with Flutter and powered by LiveKit's r
    flutter pub get
    flutter run
    ```
-
-## 🤖 Connecting an Agent
-
-Your voice assistant needs an AI agent to talk to. Choose one of these options:
-
-- [Python Sample Agent](https://github.com/livekit-examples/voice-pipeline-agent-python)
-- [Node.js Sample Agent](https://github.com/livekit-examples/voice-pipeline-agent-node)
-- [Build Your Own Agent](https://docs.livekit.io/agents/quickstart/)
-
 ## 🔑 Production Deployment
 
 For production environments:
