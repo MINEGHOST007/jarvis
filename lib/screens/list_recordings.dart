@@ -96,7 +96,7 @@ class _RecordingsListScreenState extends State<RecordingsListScreen> {
                             style:
                                 const TextStyle(fontWeight: FontWeight.w500)),
                         trailing: IconButton(
-                          icon: const Icon(Icons.download),
+                          icon: const Icon(Icons.remove_red_eye),
                           tooltip: 'Download',
                           onPressed: () => _downloadRecording(fullPath),
                         ),

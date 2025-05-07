@@ -135,6 +135,7 @@ class _ControlBarState extends State<ControlBar> {
   }
 
   String egressId = '';
+  bool audio_only = false;
 
   Future<void> startEgress() async {
     final roomContext = context.read<RoomContext>();
@@ -143,7 +144,32 @@ class _ControlBarState extends State<ControlBar> {
       debugPrint('Room name is null');
       return;
     }
-    var metadata = await serverService.startEgress(roomName);
+
+    bool? audioOnlyChoice = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Choose Recording Mode'),
+          content: const Text(
+              'Would you like to record audio only? Otherwise, video (MP4) will be recorded.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Audio Only'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Include Video'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (audioOnlyChoice == null) return;
+
+    audio_only = audioOnlyChoice;
+    var metadata = await serverService.startEgress(roomName, audio_only);
     setState(() {
       egressId = metadata['info']['egress_id'];
       isEgressActive = true;

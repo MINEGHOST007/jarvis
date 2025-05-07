@@ -15,12 +15,14 @@ class ServerService {
   factory ServerService() => _instance;
 
   final UserIdService _userIdService = UserIdService();
-  Future<Map<String, dynamic>> startEgress(String roomName) async {
+  Future<Map<String, dynamic>> startEgress(
+      String roomName, bool audio_only) async {
     final userId = await _userIdService.getUserId();
     final uri = Uri.parse(
       '$_baseUrl/egress/start'
       '?room_name=${Uri.encodeComponent(roomName)}'
-      '&user_id=${Uri.encodeComponent(userId)}',
+      '&user_id=${Uri.encodeComponent(userId)}'
+      '&audio_only=${Uri.encodeComponent(audio_only.toString())}',
     );
     final resp = await http.post(uri);
     if (resp.statusCode == 200) {
