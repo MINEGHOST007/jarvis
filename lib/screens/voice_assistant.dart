@@ -119,8 +119,7 @@ class _VoiceAssistantState extends State<VoiceAssistant>
       child: Scaffold(
         appBar: AppBar(
           elevation: 2,
-          centerTitle: true,
-          title: const Text('Voice Assistant',
+          title: const Text('Friday',
               style: TextStyle(fontWeight: FontWeight.bold)),
           actions: [
             IconButton(
@@ -136,6 +135,16 @@ class _VoiceAssistantState extends State<VoiceAssistant>
               },
             ),
             const SizedBox(width: 8),
+            isConnected
+                ? IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isConnected = false;
+                        _animationController.reverse();
+                      });
+                    },
+                    icon: const Icon(Icons.settings))
+                : const SizedBox()
           ],
         ),
         body: SafeArea(
@@ -267,7 +276,7 @@ class _VoiceAssistantState extends State<VoiceAssistant>
                     builder: (context, roomCtx, transcriptions) {
                       debugPrint("Transcriptions: $transcriptions");
                       return Container(
-                        padding: EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(10),
                         child: TranscriptionWidget(
                           textColor: colorScheme.onSurface,
                           backgroundColor: colorScheme.surface,
@@ -304,9 +313,9 @@ class _VoiceAssistantState extends State<VoiceAssistant>
                 begin: const Offset(0, 1),
                 end: Offset.zero,
               ).animate(_animation),
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: const ControlBar(),
+              child: const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: ControlBar(),
               ),
             ),
           ),
