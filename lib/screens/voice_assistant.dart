@@ -253,7 +253,6 @@ class _VoiceAssistantState extends State<VoiceAssistant>
   }
 
   Widget _buildConnectedView(ColorScheme colorScheme, Size size) {
-    // Adjust proportions based on device size
     final isLargeScreen = size.height > 700;
 
     return Container(
