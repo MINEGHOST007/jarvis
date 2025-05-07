@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:voice_assistant/services/server_service.dart';
 import 'package:path/path.dart' as p;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:intl/intl.dart';
 
 class RecordingsListScreen extends StatefulWidget {
   const RecordingsListScreen({super.key});
